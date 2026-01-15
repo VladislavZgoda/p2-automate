@@ -1,4 +1,4 @@
-import os
+from os import getenv
 from pathlib import Path
 
 from playwright.sync_api import Playwright, sync_playwright
@@ -10,11 +10,11 @@ def run(playwright: Playwright) -> None:
     context = browser.new_context(ignore_https_errors=True)
     page = context.new_page()
 
-    page.goto(os.getenv("URL"))
+    page.goto(getenv("URL"))
     page.locator("#userName").click()
-    page.locator("#userName").fill(os.getenv("LOGIN"))
+    page.locator("#userName").fill(getenv("LOGIN"))
     page.locator("#password").click()
-    page.locator("#password").fill(os.getenv("PASSWORD"))
+    page.locator("#password").fill(getenv("PASSWORD"))
     page.get_by_role("button", name="EnterA").click()
     
     page.locator(".menu-group-interaction").first.click()
