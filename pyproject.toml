@@ -6,5 +6,7 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "playwright>=1.57.0",
+    "python-dateutil>=2.9.0.post0",
     "ruff>=0.14.10",
+    "types-python-dateutil>=2.9.0.20251115",
 ]

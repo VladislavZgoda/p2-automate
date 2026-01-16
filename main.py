@@ -1,9 +1,20 @@
 from os import getenv
 from pathlib import Path
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 from playwright.sync_api import Playwright, sync_playwright
 
 script_dir = Path(__file__).resolve().parent
+
+current_date = datetime.now()
+current_month = str(current_date.month).zfill(2)
+current_year = str(current_date.year)
+
+previous_month_date = current_date - relativedelta(months=1)
+previous_month = str(previous_month_date.month).zfill(2)
+previous_year = str(previous_month_date.year)
+
 
 def run(playwright: Playwright) -> None:
     browser = playwright.chromium.launch(headless=False, slow_mo=1000)
@@ -16,7 +27,7 @@ def run(playwright: Playwright) -> None:
     page.locator("#password").click()
     page.locator("#password").fill(getenv("PASSWORD"))
     page.get_by_role("button", name="EnterA").click()
-    
+
     page.locator(".menu-group-interaction").first.click()
     page.get_by_text("Новый профиль энергии").click()
     page.locator("dx-drop-down-box").get_by_role("combobox").click()
@@ -27,10 +38,10 @@ def run(playwright: Playwright) -> None:
     page.get_by_role("textbox").click()
     page.get_by_role("textbox").press_sequentially("51424969")
     page.locator("button").nth(4).click()
-    page.get_by_role("gridcell", name="Меркурий 230 ART-03 PQRSIDN, №51424969").get_by_label(
-        "Выбрать строку"
-    ).click()
-    
+    page.get_by_role(
+        "gridcell", name="Меркурий 230 ART-03 PQRSIDN, №51424969"
+    ).get_by_label("Выбрать строку").click()
+
     page.get_by_role("button", name="OK").click()
     page.get_by_role("checkbox", name="A+").click()
 
@@ -38,26 +49,26 @@ def run(playwright: Playwright) -> None:
     page.get_by_role("combobox").nth(1).press("ArrowLeft")
     page.get_by_role("combobox").nth(1).press("ArrowLeft")
     page.get_by_role("combobox").nth(1).press_sequentially("01")
-    page.get_by_role("combobox").nth(1).press_sequentially("12")
-    page.get_by_role("combobox").nth(1).press_sequentially("2025")
-    
+    page.get_by_role("combobox").nth(1).press_sequentially(previous_month)
+    page.get_by_role("combobox").nth(1).press_sequentially(previous_year)
+
     for _ in range(3):
         page.get_by_role("combobox").nth(1).press_sequentially("00")
-    
+
     page.get_by_role("combobox").nth(2).click()
     page.get_by_role("combobox").nth(2).press("ArrowLeft")
     page.get_by_role("combobox").nth(2).press("ArrowLeft")
     page.get_by_role("combobox").nth(2).press_sequentially("01")
-    page.get_by_role("combobox").nth(2).press_sequentially("01")
-    page.get_by_role("combobox").nth(2).press_sequentially("2026")
-    
+    page.get_by_role("combobox").nth(2).press_sequentially(current_month)
+    page.get_by_role("combobox").nth(2).press_sequentially(current_year)
+
     for _ in range(3):
         page.get_by_role("combobox").nth(2).press_sequentially("00")
 
     with page.expect_download() as download_info:
         page.get_by_role("button", name="Excel").click()
     download = download_info.value
-    download.save_as(script_dir / "download" /download.suggested_filename)
+    download.save_as(script_dir / "download" / download.suggested_filename)
 
     context.close()
     browser.close()
