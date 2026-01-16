@@ -1,8 +1,8 @@
 from os import getenv
 from pathlib import Path
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
+from dateutil.relativedelta import relativedelta
 from playwright.sync_api import Playwright, sync_playwright
 
 script_dir = Path(__file__).resolve().parent
