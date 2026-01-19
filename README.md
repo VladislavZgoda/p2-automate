@@ -6,3 +6,11 @@ uv run --env-file .env -- python main.py
 URL=https://ip:port/login
 LOGIN
 PASSWORD
+
+Создать файл profiles.json со структурой:
+[
+  {
+    "file_name": "test.xlsx",
+    "meters": ["12345678", "87654321"]
+  }
+]

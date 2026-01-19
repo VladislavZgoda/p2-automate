@@ -1,6 +1,8 @@
+import json
 from os import getenv
 from pathlib import Path
 from datetime import datetime
+from typing import TypedDict
 
 from dateutil.relativedelta import relativedelta
 from playwright.sync_api import Playwright, sync_playwright
@@ -13,7 +15,14 @@ if not URL or not LOGIN or not PASSWORD:
     print("Error! Some env vars are not defined!")
     exit(1)
 
-meters: list[str] = ["51424969", "50556827"]
+Profile = TypedDict("Profile", {"file_name": str, "meters": list[str]})
+
+try:
+    with open("profiles.json", mode="r", encoding="UTF-8") as f:
+        profiles: list[Profile] = json.load(f)
+except FileNotFoundError:
+    print("Error! File 'profiles.json' not found!")
+    exit(1)
 
 script_dir = Path(__file__).resolve().parent
 
@@ -26,7 +35,7 @@ previous_month = str(previous_month_date.month).zfill(2)
 previous_year = str(previous_month_date.year)
 
 
-def run(playwright: Playwright) -> None:
+def run(playwright: Playwright, profile: Profile) -> None:
     browser = playwright.chromium.launch(headless=False, slow_mo=1000)
     context = browser.new_context(ignore_https_errors=True)
     page = context.new_page()
@@ -44,7 +53,7 @@ def run(playwright: Playwright) -> None:
     page.locator("dx-button").nth(2).click()
     page.get_by_role("menu").get_by_text("Географические объекты").click()
 
-    for meter in meters:
+    for meter in profile["meters"]:
         page.get_by_title("Поиск").click()
         page.get_by_text("Поиск по наименованию").click()
         page.get_by_role("textbox").click()
@@ -80,11 +89,12 @@ def run(playwright: Playwright) -> None:
         page.get_by_role("button", name="Excel").click()
 
     download = download_info.value
-    download.save_as(script_dir / "download" / download.suggested_filename)
+    download.save_as(script_dir / "download" / profile["file_name"])
 
     context.close()
     browser.close()
 
 
-with sync_playwright() as playwright:
-    run(playwright)
+for profile in profiles:
+    with sync_playwright() as playwright:
+        run(playwright, profile)
