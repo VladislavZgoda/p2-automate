@@ -2,7 +2,7 @@ import json
 from os import getenv
 from pathlib import Path
 from datetime import datetime
-from typing import TypedDict
+from typing import Literal, TypedDict
 
 from dateutil.relativedelta import relativedelta
 from playwright.sync_api import Playwright, sync_playwright
@@ -15,7 +15,14 @@ if not URL or not LOGIN or not PASSWORD:
     print("Error! Some env vars are not defined!")
     exit(1)
 
-Profile = TypedDict("Profile", {"file_name": str, "meters": list[str]})
+Profile = TypedDict(
+    "Profile",
+    {
+        "file_name": str,
+        "menu_type": Literal["НЭСК", "Географические объекты"],
+        "meters": list[str],
+    },
+)
 
 try:
     with open("profiles.json", mode="r", encoding="UTF-8") as f:
@@ -51,7 +58,9 @@ def run(playwright: Playwright, profile: Profile) -> None:
     page.get_by_text("Новый профиль энергии").click()
     page.locator("dx-drop-down-box").get_by_role("combobox").click()
     page.locator("dx-button").nth(2).click()
-    page.get_by_role("menu").get_by_text("Географические объекты").click()
+
+    menu_type = "НЭСК" if profile["menu_type"] == "НЭСК" else "Географические объекты"
+    page.get_by_role("menu").get_by_text(menu_type).click()
 
     for meter in profile["meters"]:
         page.get_by_title("Поиск").click()

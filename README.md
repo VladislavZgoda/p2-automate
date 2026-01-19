@@ -11,6 +11,9 @@ PASSWORD
 [
   {
     "file_name": "test.xlsx",
+    "menu_type": "НЭСК" or "Географические объекты",
     "meters": ["12345678", "87654321"]
   }
 ]
+
+Создать папку download.
