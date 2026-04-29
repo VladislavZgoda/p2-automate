@@ -55,9 +55,17 @@ def run(playwright: Playwright) -> None:
     page.get_by_role("button", name="EnterA").click()
 
     page.locator(".menu-group-interaction").first.click()
-    page.get_by_text("Новый профиль энергии").click()
 
     for profile in profiles:
+        profile_menu_name = (
+            "Новый профиль энергии"
+            if profile["profile_type"] == "30"
+            else "Почасовой профиль"
+        )
+
+        page.locator('a[href="/reports"]').click()
+        page.get_by_text(profile_menu_name).click()
+
         page.locator("dx-drop-down-box").get_by_role("combobox").click()
         page.locator("dx-button").nth(2).click()
 
@@ -78,7 +86,9 @@ def run(playwright: Playwright) -> None:
             page.get_by_title("Удалить").locator("button").click()
 
         page.get_by_role("button", name="OK").click()
-        page.get_by_role("checkbox", name="A+").click()
+
+        if profile["profile_type"] == "30":
+            page.get_by_role("checkbox", name="A+").click()
 
         page.get_by_role("combobox").nth(1).click()
         page.get_by_role("combobox").nth(1).press("ArrowLeft")
