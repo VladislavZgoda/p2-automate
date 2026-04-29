@@ -12,6 +12,7 @@ PASSWORD
   {
     "file_name": "test.xlsx",
     "menu_type": "НЭСК" or "Географические объекты",
+    "profile_type": "30" or "60",
     "meters": ["12345678", "87654321"]
   }
 ]
