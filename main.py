@@ -67,7 +67,7 @@ def run(playwright: Playwright) -> None:
         page.get_by_text(profile_menu_name).click()
 
         page.locator("dx-drop-down-box").get_by_role("combobox").click()
-        page.locator("dx-button").nth(2).click()
+        page.locator('[icon="Folder"]').click()
 
         menu_type = (
             "НЭСК" if profile["menu_type"] == "НЭСК" else "Географические объекты"
